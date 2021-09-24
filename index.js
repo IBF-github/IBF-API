@@ -1,5 +1,6 @@
 const express = require("express");
 const axios = require("axios");
+const querystring = require("querystring");
 require("dotenv").config();
 const PORT = 8080;
 
@@ -28,6 +29,7 @@ app.get("/", (req, res) =>
 //adicionar condicional para o app rodar só se a key de terminado for true
 async function appStart() {}
 
+//funçao que gera o token de autorizaçao para o auvo
 async function getAuthorization() {
   const response = await axios(
     `${AuvoBaseURL}/login/?apiKey=${APIauvoKey}&apiToken=${APIauvoToken}`
@@ -38,6 +40,8 @@ async function getAuthorization() {
   return acessToken;
 }
 
+//funçao que gera o cpf do cliente do auvo para referenciar no pipeDrive
+//recebe o token de acesso(da funçao) e a id do cliente(da requisiçao)
 async function getClientAuvo(acessToken, id) {
   const response = await axios({
     method: "get",
@@ -54,6 +58,7 @@ async function getClientAuvo(acessToken, id) {
   return cpf;
 }
 
+//funçao para selecionar o cliente no pipeDrive, recebe o cpf do cliente alvo do auvo (kek)
 async function getClientPipe(cpf) {
   const response = await axios(
     `${PipeBaseURL}/persons/search?fields=custom_fields&api_token=${pipeKey}&term=${cpf}`
@@ -64,7 +69,22 @@ async function getClientPipe(cpf) {
   return id;
 }
 
-async function addNote(id) {
-  //ver api pipedrive sobre adicionar nota a um cliente
-  const response = await axios();
+//funçao que adiciona a nota no cliente do pipeDrive
+//recebe o id do cliente do pipeDrive (da funçao), nome da tarefa realizada, local, operador e horario (da requisiçao)
+async function addNote(id, nomeTarefa, local, operador, horario) {
+  let body = {
+    content: `Tarefa ${nomeTarefa} foi concluida em ${local} por ${operador} às ${horario}`,
+    person_id: id,
+  };
+
+  const response = await axios({
+    method: "post",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    url: `${PipeBaseURL}/notes`,
+    body: querystring.stringify(body),
+  });
+  const success = await response.success;
+  console.log(success);
 }
