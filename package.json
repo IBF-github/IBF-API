@@ -10,13 +10,14 @@
     "type": "git",
     "url": "git+https://github.com/AngeloAntonioScholze/pipedriveAPI.git"
   },
-  "author": "",
+  "author": "Angelo Antonio Scholze",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/AngeloAntonioScholze/pipedriveAPI/issues"
   },
   "homepage": "https://github.com/AngeloAntonioScholze/pipedriveAPI#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "axios": "^0.21.4",
+    "dotenv": "^10.0.0"
   }
 }

@@ -1,6 +1,5 @@
 const express = require("express");
 const axios = require("axios");
-const querystring = require("querystring");
 require("dotenv").config();
 const PORT = 8080;
 
