@@ -13,7 +13,7 @@ const APIauvoToken = process.env.APIauvoToken;
 const AuvoBaseURL = "https://api.auvo.com.br/v2/";
 const PipeBaseURL = "https://api.pipedrive.com/v1";
 
-app.get("/", (req, res) =>
+app.get("/", (req, res) => {
   res.status(200).send(`
     <html>
     <head><title>Success!</title></head>
@@ -23,8 +23,10 @@ app.get("/", (req, res) =>
         <a href="/omieList">Chamar Lista</a>
     </body>
     </html>
-    `)
-);
+  `);
+
+  getAuthorization();
+});
 //adicionar condicional para o app rodar só se a key de terminado for true
 async function appStart() {}
 

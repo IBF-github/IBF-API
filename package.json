@@ -18,6 +18,7 @@
   "homepage": "https://github.com/AngeloAntonioScholze/pipedriveAPI#readme",
   "dependencies": {
     "axios": "^0.21.4",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1"
   }
 }
