@@ -27,27 +27,19 @@ app.post("/", (req, res) => {
 app.post("/auvo", (req, res) => {
   const body = req.body;
   const auvoId = body.entities[0].customerId;
-  const reqTarefa = body.entities[0].taskTypeDescription;
-  const reqLocal = body.entities[0].address;
-  const reqOperador = body.entities[0].userFromName;
-  const reqHorario = body.entities[0].checkOutDate;
-  appStart(auvoId, reqTarefa, reqLocal, reqOperador, reqHorario);
+  const reqPDF = body.entities[0].taskUrl;
+
+  appStart(auvoId, reqPDF);
   res.json({ status: "success" });
 });
 
 //adicionar condicional para o app rodar só se a key de terminado for true
-async function appStart(auvoId, reqTarefa, reqLocal, reqOperador, reqHorario) {
+async function appStart(auvoId, reqPDF) {
   try {
     const accessToken = await getAuthorization();
     const auvoCpf = await getClientAuvo(accessToken, auvoId);
     const pipeClient = await getClientPipe(auvoCpf);
-    const noteAdded = await addNote(
-      pipeClient,
-      reqTarefa,
-      reqLocal,
-      reqOperador,
-      reqHorario
-    );
+    const noteAdded = await addNote(pipeClient, reqPDF);
     console.log(noteAdded);
   } catch (err) {
     console.error(err);
@@ -109,10 +101,10 @@ async function getClientPipe(cpf) {
 
 //funçao que adiciona a nota no cliente do pipeDrive
 //recebe o id do cliente do pipeDrive (da funçao), nome da tarefa realizada, local, operador e horario (da requisiçao)
-async function addNote(id, nomeTarefa, local, operador, horario) {
+async function addNote(id, pdf) {
   try {
     const body = {
-      content: `Tarefa ${nomeTarefa} concluida em ${local} por ${operador} às ${horario}`,
+      content: `Relatorio da tarefa aqui ${pdf}`,
       person_id: id,
     };
     const response = await axios({
