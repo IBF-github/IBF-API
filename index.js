@@ -5,6 +5,7 @@ require("dotenv").config();
 const PORT = 8080;
 
 const app = express();
+app.use(express.static("public"));
 app.use(express.json());
 
 const pipeKey = process.env.pipeKey;
@@ -14,40 +15,38 @@ const APIauvoToken = process.env.APIauvoToken;
 const AuvoBaseURL = "https://api.auvo.com.br/v2/";
 const PipeBaseURL = "https://api.pipedrive.com/v1";
 
-const placeholderId = 5838426;
-const placeholderIdPipe = 182886;
-const placeholderTarefa = "aterramento";
-const placeholderLocal = "curitiba";
-const placeholderOperador = "angelo";
-const placeholderHorario = "meia noite";
+app.get("/", (req, res) => {});
 
-app.get("/", (req, res) => {
-  res.status(200).send(`
-    <html>
-    <head><title>Success!</title></head>
-    <body>
-        <h1>You did it!</h1>
-        <img src="https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif" alt="Cool kid doing thumbs up" />
-        <a href="/omieList">Chamar Lista</a>
-    </body>
-    </html>
-  `);
+app.post("/", (req, res) => {
+  console.log("request received");
+  console.log(req.body);
+  getAuthorization();
+  res.send("post recieved");
+});
 
-  getClientPipe("teste de automaçao");
+app.post("/auvo", (req, res) => {
+  const body = req.body;
+  const auvoId = body.entities[0].customerId;
+  const reqTarefa = body.entities[0].taskTypeDescription;
+  const reqLocal = body.entities[0].address;
+  const reqOperador = body.entities[0].userFromName;
+  const reqHorario = body.entities[0].checkOutDate;
+  appStart(auvoId, reqTarefa, reqLocal, reqOperador, reqHorario);
+  res.json({ status: "success" });
 });
 
 //adicionar condicional para o app rodar só se a key de terminado for true
-async function appStart() {
+async function appStart(auvoId, reqTarefa, reqLocal, reqOperador, reqHorario) {
   try {
     const accessToken = await getAuthorization();
-    const auvoCpf = await getClientAuvo(accessToken, placeholderId);
+    const auvoCpf = await getClientAuvo(accessToken, auvoId);
     const pipeClient = await getClientPipe(auvoCpf);
     const noteAdded = await addNote(
       pipeClient,
-      placeholderTarefa,
-      placeholderLocal,
-      placeholderOperador,
-      placeholderHorario
+      reqTarefa,
+      reqLocal,
+      reqOperador,
+      reqHorario
     );
     console.log(noteAdded);
   } catch (err) {
@@ -63,7 +62,7 @@ async function getAuthorization() {
     );
     const data = await response.data;
     const accessToken = await data.result.accessToken;
-    console.log(accessToken);
+    console.log("Token de autorizaçao ok");
     return accessToken;
   } catch (err) {
     console.error(err);
@@ -85,7 +84,7 @@ async function getClientAuvo(acessToken, id) {
     });
     const data = await response.data;
     const cpf = await data.result.cpfCnpj;
-    console.log(cpf);
+    console.log("Cpf auvo ok");
     return cpf;
   } catch (err) {
     console.error(err);
@@ -96,11 +95,12 @@ async function getClientAuvo(acessToken, id) {
 async function getClientPipe(cpf) {
   try {
     const response = await axios(
-      `${PipeBaseURL}/persons/search?exact_match=true&api_token=${pipeKey}&term=${cpf}`
+      `${PipeBaseURL}/persons/search?api_token=${pipeKey}&term=${cpf}`
     );
     const data = await response.data.data;
     const id = await data.items[0].item.id;
     console.log(id);
+    console.log("Id pipedrive ok");
     return id;
   } catch (err) {
     console.error(err);
@@ -125,13 +125,8 @@ async function addNote(id, nomeTarefa, local, operador, horario) {
       data: qs.stringify(body),
     });
     const data = await response.data;
-    console.log(data);
     const success = await data.success;
-    if (success) {
-      return "Note added";
-    } else {
-      return "Something whent wrong";
-    }
+    return "Note added";
   } catch (err) {
     console.error(err);
   }
