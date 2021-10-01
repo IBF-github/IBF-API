@@ -20,7 +20,7 @@ app.get("/", (req, res) => {});
 app.post("/", (req, res) => {
   console.log("request received");
   console.log(req.body);
-  getAuthorization();
+
   res.send("post recieved");
 });
 
@@ -87,10 +87,10 @@ async function getClientAuvo(acessToken, id) {
 async function getClientPipe(cpf) {
   try {
     const response = await axios(
-      `${PipeBaseURL}/persons/search?api_token=${pipeKey}&term=${cpf}`
+      `${PipeBaseURL}/persons/search?exact_match=true&api_token=${pipeKey}&term=${cpf}`
     );
     const data = await response.data.data;
-    const id = await data.items[0].item.id;
+    const id = await data.items[0].item;
     console.log(id);
     console.log("Id pipedrive ok");
     return id;
