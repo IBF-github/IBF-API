@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const qs = require("querystring");
 require("dotenv").config();
-const port = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;
 
 const app = express();
 app.use(express.static("public"));
@@ -124,6 +124,6 @@ async function addNote(id, pdf) {
   }
 }
 
-app.listen(port, () =>
+app.listen(PORT, () =>
   console.log(`App listening at http://localhost:${PORT}`)
 );
