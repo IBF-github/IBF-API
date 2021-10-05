@@ -11,6 +11,7 @@ app.use(express.json());
 const pipeKey = process.env.pipeKey;
 const APIauvoKey = process.env.APIauvoKey;
 const APIauvoToken = process.env.APIauvoToken;
+let taskIdControl = [];
 
 const AuvoBaseURL = "https://api.auvo.com.br/v2/";
 const PipeBaseURL = "https://api.pipedrive.com/v1";
@@ -25,12 +26,15 @@ app.post("/", (req, res) => {
 
 app.post("/auvo", (req, res) => {
   const body = req.body;
+  const taskId = body.entities[0].taskID;
   const isFinished = body.entities[0].finished;
   const havePendency = body.pendency;
   const externalId = body.entities[0].externalId;
   const auvoId = body.entities[0].customerId;
   const reqPDF = body.entities[0].taskUrl;
-  if (isFinished && havePendency == "" && externalId != null) {
+
+  if (isFinished && havePendency == "" && !taskIdControl.includes(taskID)) {
+    taskIdControl.push(taskID);
     appStart(auvoId, reqPDF);
     res.json({ status: "success" });
   }
