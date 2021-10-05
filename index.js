@@ -20,17 +20,20 @@ app.get("/", (req, res) => {});
 app.post("/", (req, res) => {
   console.log("request received");
   console.log(req.body);
-
   res.send("post recieved");
 });
 
 app.post("/auvo", (req, res) => {
   const body = req.body;
+  const isFinished = body.entities[0].finished;
+  const havePendency = body.pendency;
+  const externalId = body.entities[0].externalId;
   const auvoId = body.entities[0].customerId;
   const reqPDF = body.entities[0].taskUrl;
-
-  appStart(auvoId, reqPDF);
-  res.json({ status: "success" });
+  if (isFinished && havePendency == "" && externalId != null) {
+    appStart(auvoId, reqPDF);
+    res.json({ status: "success" });
+  }
 });
 
 //adicionar condicional para o app rodar só se a key de terminado for true
