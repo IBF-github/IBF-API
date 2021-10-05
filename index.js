@@ -11,7 +11,7 @@ app.use(express.json());
 const pipeKey = process.env.pipeKey;
 const APIauvoKey = process.env.APIauvoKey;
 const APIauvoToken = process.env.APIauvoToken;
-let taskIdControl = [];
+const taskIdControl = [];
 
 const AuvoBaseURL = "https://api.auvo.com.br/v2/";
 const PipeBaseURL = "https://api.pipedrive.com/v1";
@@ -20,7 +20,6 @@ app.get("/", (req, res) => {});
 
 app.post("/", (req, res) => {
   console.log("request received");
-  console.log(req.body);
   res.send("post recieved");
 });
 
@@ -28,14 +27,33 @@ app.post("/auvo", (req, res) => {
   const body = req.body;
   const taskId = body.entities[0].taskID;
   const isFinished = body.entities[0].finished;
-  const havePendency = body.pendency;
+  const havePendency = body.entities[0].pendency;
   const auvoId = body.entities[0].customerId;
   const reqPDF = body.entities[0].taskUrl;
 
-  if (isFinished && havePendency == "" && !taskIdControl.includes(taskId)) {
-    taskIdControl.push(taskID);
+  console.log(
+    taskId,
+    isFinished,
+    havePendency,
+    taskIdControl,
+    havePendency === "",
+    !taskIdControl.includes(taskId)
+  );
+
+  if (isFinished && havePendency === "" && !taskIdControl.includes(taskId)) {
+    taskIdControl.push(taskId);
     appStart(auvoId, reqPDF);
     res.json({ status: "success" });
+    console.log("tarefa postada");
+    return;
+  } else if (havePendency != "") {
+    console.log("tarefa com pendencia");
+    return;
+  } else if (taskIdControl.includes(taskId)) {
+    console.log("tarefa ja processada");
+    return;
+  } else {
+    console.log("algum outro erro");
   }
 });
 
@@ -63,6 +81,7 @@ async function getAuthorization() {
     console.log("Token de autorizaçao ok");
     return accessToken;
   } catch (err) {
+    console.log("getting auth token failed");
     console.error(err);
   }
 }
@@ -85,6 +104,7 @@ async function getClientAuvo(acessToken, id) {
     console.log("Cpf auvo ok");
     return cpf;
   } catch (err) {
+    console.log("getting auvo id failed");
     console.error(err);
   }
 }
@@ -96,11 +116,12 @@ async function getClientPipe(cpf) {
       `${PipeBaseURL}/persons/search?exact_match=true&api_token=${pipeKey}&term=${cpf}`
     );
     const data = await response.data.data;
-    const id = await data.items[0].item;
+    const id = await data.items[0].item.id;
     console.log(id);
     console.log("Id pipedrive ok");
     return id;
   } catch (err) {
+    console.log("getting pipe id failed");
     console.error(err);
   }
 }
@@ -126,6 +147,7 @@ async function addNote(id, pdf) {
     const success = await data.success;
     return "Note added";
   } catch (err) {
+    console.log("note not added");
     console.error(err);
   }
 }
