@@ -84,6 +84,7 @@ async function getAuthorization() {
   } catch (err) {
     console.log("getting auth token failed");
     console.error(err);
+    break
   }
 }
 
