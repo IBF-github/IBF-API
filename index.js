@@ -31,15 +31,6 @@ app.post("/auvo", (req, res) => {
   const auvoId = body.entities[0].customerId;
   const reqPDF = body.entities[0].taskUrl;
 
-  console.log(
-    taskId,
-    isFinished,
-    havePendency,
-    taskIdControl,
-    havePendency === "",
-    !taskIdControl.includes(taskId)
-  );
-
   if (isFinished && havePendency === "" && !taskIdControl.includes(taskId)) {
     taskIdControl.push(taskId);
     appStart(auvoId, reqPDF);
@@ -79,12 +70,10 @@ async function getAuthorization() {
     const data = await response.data;
     const accessToken = await data.result.accessToken;
     console.log("Token de autorizaçao ok");
-    console.log(acessToken[0 - 5]);
     return accessToken;
   } catch (err) {
     console.log("getting auth token failed");
     console.error(err);
-    break
   }
 }
 
