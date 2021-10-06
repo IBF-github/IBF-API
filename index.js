@@ -34,16 +34,19 @@ app.post("/auvo", (req, res) => {
   if (isFinished && havePendency === "" && !taskIdControl.includes(taskId)) {
     taskIdControl.push(taskId);
     appStart(auvoId, reqPDF);
-    res.json({ status: "success" });
     console.log("tarefa postada");
+    res.send("success 1");
     return;
   } else if (havePendency != "") {
     console.log("tarefa com pendencia");
+    res.send("failed type 1");
     return;
   } else if (taskIdControl.includes(taskId)) {
     console.log("tarefa ja processada");
+    res.send("failed type 2");
     return;
   } else {
+    res.send("failed type 3");
     console.log("algum outro erro");
   }
 });
