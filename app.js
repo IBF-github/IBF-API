@@ -174,7 +174,7 @@ async function addTask(clientName, pdf) {
     };
     const response = await axios({
       method: "post",
-      url: `${PipeBaseURL}/activities`,
+      url: `${PipeBaseURL}/activities?api_token=${pipeKey}`,
       headers: {
         "Content-type": "application/json",
         Accept: "application/jsopn",
@@ -182,7 +182,7 @@ async function addTask(clientName, pdf) {
       data: body,
     });
   } catch (err) {
-    console.log("taks not added");
+    console.log("task not added");
     console.error(err);
   }
 }
