@@ -55,8 +55,20 @@ app.post("/auvo", (req, res) => {
 async function appStart(auvoId, reqPDF) {
   try {
     const accessToken = await getAuthorization();
+    if (acessToken == undefined) {
+      console.log("Não foi possivel gerar o token de acesso no auvo");
+      return;
+    }
     const auvoCpf = await getClientAuvo(accessToken, auvoId);
+    if (auvoCpf == undefined) {
+      console.log("Não foi possivel achar o cliente no auvo");
+      return;
+    }
     const pipeClient = await getClientPipe(auvoCpf);
+    if (pipeClient == undefined) {
+      console.log("Não foi possivel achar o cliente no pipe");
+      return;
+    }
     const noteAdded = await addNote(pipeClient, reqPDF);
     console.log(noteAdded);
   } catch (err) {
