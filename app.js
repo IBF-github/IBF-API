@@ -74,6 +74,7 @@ async function appStart(auvoId, reqPDF) {
     const noteAdded = await addNote(pipeClientId, reqPDF);
     const taskAdded = await addTask(pipeClientName, reqPDF);
     console.log(noteAdded);
+    console.log(taskAdded);
   } catch (err) {
     console.error(err);
   }
@@ -179,6 +180,8 @@ async function addTask(clientName, pdf) {
       },
       data: body,
     });
+
+    return "task added";
   } catch (err) {
     console.log("task not added");
     console.error(err);
