@@ -23,6 +23,7 @@ app.post("/", (req, res) => {
   res.send("post recieved");
 });
 
+//rota principal da api, para onde os webhooks são direcionados
 app.post("/auvo", (req, res) => {
   const body = req.body;
   const taskId = body.entities[0].taskID;
@@ -65,11 +66,14 @@ async function appStart(auvoId, reqPDF) {
       return;
     }
     const pipeClient = await getClientPipe(auvoCpf);
-    if (pipeClient == undefined) {
+    const pipeClientId = await pipeClient.id;
+    const pipeClientName = await pipeClient.name;
+    if (pipeClientId == undefined) {
       console.log("Não foi possivel achar o cliente no pipe");
       return;
     }
-    const noteAdded = await addNote(pipeClient, reqPDF);
+    const noteAdded = await addNote(pipeClientId, reqPDF);
+    const taskAdded = await addTask(pipeClientName, reqPDF);
     console.log(noteAdded);
   } catch (err) {
     console.error(err);
@@ -84,7 +88,9 @@ async function getAuthorization() {
     );
     const data = await response.data;
     const accessToken = await data.result.accessToken;
-    console.log("Token de autorizaçao ok");
+    if (accessToken != undefined) {
+      console.log("Token de autorizaçao ok");
+    }
     return accessToken;
   } catch (err) {
     console.log("getting auth token failed");
@@ -107,7 +113,9 @@ async function getClientAuvo(acessToken, id) {
     });
     const data = await response.data;
     const cpf = await data.result.cpfCnpj;
-    console.log("Cpf auvo ok");
+    if (cpf != undefined) {
+      console.log("Cpf auvo ok");
+    }
     return cpf;
   } catch (err) {
     console.log("getting auvo id failed");
@@ -122,10 +130,12 @@ async function getClientPipe(cpf) {
       `${PipeBaseURL}/persons/search?exact_match=true&api_token=${pipeKey}&term=${cpf}`
     );
     const data = await response.data.data;
+    const name = await data.items[0].item.name;
     const id = await data.items[0].item.id;
-    console.log(id);
-    console.log("Id pipedrive ok");
-    return id;
+    if (id != undefined) {
+      console.log("Id pipedrive ok");
+    }
+    return { id, name };
   } catch (err) {
     console.log("getting pipe id failed");
     console.error(err);
@@ -154,6 +164,30 @@ async function addNote(id, pdf) {
     return "Note added";
   } catch (err) {
     console.log("note not added");
+    console.error(err);
+  }
+}
+
+//funçao para adicionar uma tarefa a um funcionario
+//funcionario atualmente é riva de oliveira alves
+async function addTask(clientName, pdf) {
+  try {
+    const body = {
+      user_id: 12172438,
+      type: "encaminhar___pdf",
+      note: `Encaminhar relatorio para cliente ${clientName} da tarefa ${pdf}.`,
+    };
+    const response = await axios({
+      method: "post",
+      url: `${PipeBaseURL}/activities`,
+      headers: {
+        "Content-type": "application/json",
+        Accept: "application/jsopn",
+      },
+      data: body,
+    });
+  } catch (err) {
+    console.log("taks not added");
     console.error(err);
   }
 }
