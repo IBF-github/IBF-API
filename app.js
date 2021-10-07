@@ -91,7 +91,7 @@ async function getAuthorization() {
       console.log("Token de autorizaçao ok");
       return accessToken;
     }
-    console.log("unavailable token");
+    console.log("unavailable auvo token");
     return;
   } catch (err) {
     console.log("getting auth token failed");
@@ -116,8 +116,10 @@ async function getClientAuvo(acessToken, id) {
     const cpf = await data.result.cpfCnpj;
     if (typeof cpf !== "undefined") {
       console.log("Cpf auvo ok");
+      return cpf;
     }
-    return cpf;
+    console.log("Id auvo unnavailable");
+    return;
   } catch (err) {
     console.log("getting auvo id failed");
     console.error(err);
@@ -135,8 +137,10 @@ async function getClientPipe(cpf) {
     const id = await data.items[0].item.id;
     if (typeof id !== "undefined") {
       console.log("Id pipedrive ok");
+      return { id, name };
     }
-    return { id, name };
+    console.log("Id pipedrive unnavailable");
+    return;
   } catch (err) {
     console.log("getting pipe id failed");
     console.error(err);
