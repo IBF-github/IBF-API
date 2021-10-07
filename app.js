@@ -16,8 +16,6 @@ const taskIdControl = [];
 const AuvoBaseURL = "https://api.auvo.com.br/v2/";
 const PipeBaseURL = "https://api.pipedrive.com/v1";
 
-app.get("/", (req, res) => {});
-
 app.post("/", (req, res) => {
   console.log("request received");
   res.send("post recieved");
