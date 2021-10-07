@@ -81,6 +81,7 @@ async function getAuthorization() {
         apiKey: `${APIauvoKey}`,
         apiToken: `${APIauvoToken}`,
       },
+      url: `${AuvoBaseURL}/login`,
     });
     const data = await response.data;
     const accessToken = await data.result.accessToken;
