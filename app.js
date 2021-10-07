@@ -36,7 +36,7 @@ app.post("/auvo", (req, res) => {
     console.log("tarefa postada");
     res.send("success 1");
     return;
-  } else if (havePendency != "") {
+  } else if (havePendency !== "") {
     console.log("tarefa com pendencia");
     res.send("failed type 1");
     return;
@@ -45,8 +45,8 @@ app.post("/auvo", (req, res) => {
     res.send("failed type 2");
     return;
   } else {
-    res.send("failed type 3");
     console.log("algum outro erro");
+    res.send("failed type 3");
   }
 });
 
@@ -86,7 +86,7 @@ async function getAuthorization() {
     );
     const data = await response.data;
     const accessToken = await data.result.accessToken;
-    if (accessToken !== "undefined") {
+    if (typeof accessToken !== "undefined") {
       console.log(acessToken);
       console.log("Token de autorizaçao ok");
       return accessToken;
