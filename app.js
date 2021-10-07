@@ -87,8 +87,6 @@ async function getAuthorization() {
     );
     const data = await response.data;
     const accessToken = await data.result.accessToken;
-
-    console.log(acessToken);
     console.log("Token de autorizaçao ok");
     return accessToken;
   } catch (err) {
