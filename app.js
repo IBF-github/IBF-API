@@ -87,13 +87,10 @@ async function getAuthorization() {
     );
     const data = await response.data;
     const accessToken = await data.result.accessToken;
-    if (typeof accessToken !== "undefined") {
-      console.log(acessToken);
-      console.log("Token de autorizaçao ok");
-      return accessToken;
-    }
-    console.log("unavailable auvo token");
-    return;
+
+    console.log(acessToken);
+    console.log("Token de autorizaçao ok");
+    return accessToken;
   } catch (err) {
     console.log("getting auth token failed");
     console.error(err);
@@ -115,12 +112,8 @@ async function getClientAuvo(acessToken, id) {
     });
     const data = await response.data;
     const cpf = await data.result.cpfCnpj;
-    if (typeof cpf !== "undefined") {
-      console.log("Cpf auvo ok");
-      return cpf;
-    }
-    console.log("Id auvo unnavailable");
-    return;
+    console.log("Cpf auvo ok");
+    return cpf;
   } catch (err) {
     console.log("getting auvo id failed");
     console.error(err);
@@ -136,12 +129,8 @@ async function getClientPipe(cpf) {
     const data = await response.data.data;
     const name = await data.items[0].item.name;
     const id = await data.items[0].item.id;
-    if (typeof id !== "undefined") {
-      console.log("Id pipedrive ok");
-      return { id, name };
-    }
-    console.log("Id pipedrive unnavailable");
-    return;
+    console.log("Id pipedrive ok");
+    return { id, name };
   } catch (err) {
     console.log("getting pipe id failed");
     console.error(err);
