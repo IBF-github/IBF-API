@@ -17,7 +17,7 @@ const AuvoBaseURL = "https://api.auvo.com.br/v2/";
 const PipeBaseURL = "https://api.pipedrive.com/v1";
 
 app.post("/", (req, res) => {
-  console.log("request received");
+  console.log("connected");
   res.send("post recieved");
 });
 
@@ -54,19 +54,19 @@ app.post("/auvo", (req, res) => {
 async function appStart(auvoId, reqPDF) {
   try {
     const accessToken = await getAuthorization();
-    if (acessToken == undefined) {
+    if (typeof acessToken === "undefined") {
       console.log("Não foi possivel gerar o token de acesso no auvo");
       return;
     }
     const auvoCpf = await getClientAuvo(accessToken, auvoId);
-    if (auvoCpf == undefined) {
+    if (typeof auvoCpf === "undefined") {
       console.log("Não foi possivel achar o cliente no auvo");
       return;
     }
     const pipeClient = await getClientPipe(auvoCpf);
     const pipeClientId = await pipeClient.id;
     const pipeClientName = await pipeClient.name;
-    if (pipeClientId == undefined) {
+    if (typeof pipeClientId === "undefined") {
       console.log("Não foi possivel achar o cliente no pipe");
       return;
     }
@@ -86,11 +86,13 @@ async function getAuthorization() {
     );
     const data = await response.data;
     const accessToken = await data.result.accessToken;
-    if (accessToken != undefined) {
+    if (accessToken !== "undefined") {
       console.log(acessToken);
       console.log("Token de autorizaçao ok");
+      return accessToken;
     }
-    return accessToken;
+    console.log("unavailable token");
+    return;
   } catch (err) {
     console.log("getting auth token failed");
     console.error(err);
@@ -112,7 +114,7 @@ async function getClientAuvo(acessToken, id) {
     });
     const data = await response.data;
     const cpf = await data.result.cpfCnpj;
-    if (cpf != undefined) {
+    if (typeof cpf !== "undefined") {
       console.log("Cpf auvo ok");
     }
     return cpf;
@@ -131,7 +133,7 @@ async function getClientPipe(cpf) {
     const data = await response.data.data;
     const name = await data.items[0].item.name;
     const id = await data.items[0].item.id;
-    if (id != undefined) {
+    if (typeof id !== "undefined") {
       console.log("Id pipedrive ok");
     }
     return { id, name };
