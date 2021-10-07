@@ -45,6 +45,7 @@ app.post("/auvo", (req, res) => {
     res.send("failed type 2");
     return;
   } else {
+    console.log(body);
     console.log("algum outro erro");
     res.send("failed type 3");
   }
