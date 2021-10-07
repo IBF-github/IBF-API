@@ -2,7 +2,7 @@
   "name": "auvoapi",
   "version": "1.0.0",
   "description": "API criada para integraçao entre Sistema Auvo e Sistema PipeDrive",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
