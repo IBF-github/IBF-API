@@ -55,22 +55,10 @@ app.post("/auvo", (req, res) => {
 async function appStart(auvoId, reqPDF) {
   try {
     const accessToken = await getAuthorization();
-    if (typeof acessToken === "undefined") {
-      console.log("Não foi possivel gerar o token de acesso no auvo");
-      return;
-    }
     const auvoCpf = await getClientAuvo(accessToken, auvoId);
-    if (typeof auvoCpf === "undefined") {
-      console.log("Não foi possivel achar o cliente no auvo");
-      return;
-    }
     const pipeClient = await getClientPipe(auvoCpf);
     const pipeClientId = await pipeClient.id;
     const pipeClientName = await pipeClient.name;
-    if (typeof pipeClientId === "undefined") {
-      console.log("Não foi possivel achar o cliente no pipe");
-      return;
-    }
     const noteAdded = await addNote(pipeClientId, reqPDF);
     const taskAdded = await addTask(pipeClientName, reqPDF);
     console.log(noteAdded);
@@ -83,9 +71,17 @@ async function appStart(auvoId, reqPDF) {
 //funçao que gera o token de autorizaçao para o auvo
 async function getAuthorization() {
   try {
-    const response = await axios(
-      `${AuvoBaseURL}/login/?apiKey=${APIauvoKey}&apiToken=${APIauvoToken}`
-    );
+    const response = await axios({
+      method: "post",
+      headers: {
+        "Content-type": "application/json",
+        Accept: "application/json",
+      },
+      data: {
+        apiKey: `${APIauvoKey}`,
+        apiToken: `${APIauvoToken}`,
+      },
+    });
     const data = await response.data;
     const accessToken = await data.result.accessToken;
     console.log("Token de autorizaçao ok");
