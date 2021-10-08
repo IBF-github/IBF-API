@@ -60,7 +60,7 @@ async function appStart(auvoId, reqPDF) {
     const pipeClientId = await pipeClient.id;
     const pipeClientName = await pipeClient.name;
     const noteAdded = await addNote(pipeClientId, reqPDF);
-    const taskAdded = await addTask(pipeClientName, reqPDF);
+    const taskAdded = await addTask(pipeClientName, pipeClientId, reqPDF);
     console.log(noteAdded);
     console.log(taskAdded);
   } catch (err) {
@@ -161,10 +161,11 @@ async function addNote(id, pdf) {
 
 //funçao para adicionar uma tarefa a um funcionario
 //funcionario atualmente é riva de oliveira alves
-async function addTask(clientName, pdf) {
+async function addTask(clientName, clientId, pdf) {
   try {
     const body = {
       user_id: 12172438,
+      person_id: clientName,
       type: "encaminhar___pdf",
       note: `Encaminhar relatorio para cliente ${clientName} da tarefa ${pdf}.`,
     };
