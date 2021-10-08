@@ -165,7 +165,7 @@ async function addTask(clientName, clientId, pdf) {
   try {
     const body = {
       user_id: 12172438,
-      person_id: clientName,
+      person_id: clientId,
       type: "encaminhar___pdf",
       note: `Encaminhar relatorio para cliente ${clientName} da tarefa ${pdf}.`,
     };
