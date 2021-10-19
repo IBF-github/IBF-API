@@ -51,7 +51,7 @@ app.post("/auvo", (req, res) => {
   }
 });
 
-//adicionar condicional para o app rodar só se a key de terminado for true
+//funçao para inicio da aplicaçao
 async function appStart(auvoId, reqPDF) {
   try {
     const accessToken = await getAuthorization();
